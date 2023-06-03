@@ -1,0 +1,8 @@
+{
+  "name": "amplitude-hackathon",
+  "packageManager": "yarn@3.6.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
