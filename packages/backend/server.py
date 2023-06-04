@@ -1,5 +1,6 @@
-from flask import Flask, jsonify
-from flask_mongoengine import MongoEngine
+from flask import Flask, jsonify,request
+# from flask_mongoengine import MongoEngine
+from flask_pymongo import PyMongo
 from mongoengine import Document, StringField, ListField, DateTimeField, EmbeddedDocumentField
 from datetime import datetime
 import pickle
@@ -8,53 +9,59 @@ from sklearn.model_selection import train_test_split
 import xgboost as xgb
 import shap
 from sklearn.metrics import accuracy_score
+from bson.objectid import ObjectId
+from flask_cors import CORS
+
 
 
 app = Flask(__name__)
-
-# Fig out port stuff
-app.config['MONGODB_SETTINGS'] = {
-    'db': 'your_database',
-    'host': 'localhost',
-    'port': 27017
-}
-
-db = MongoEngine()
-db.init_app(app)
-
-class WorkflowStatus(db.Document):
-    name = db.StringField(choices=["FetchingData", "ProcessingData", "Training", "Ready"])
-
-class Workflow(db.Document):
-    createdAt = db.DateTimeField(default=datetime.utcnow)
-    updatedAt = db.DateTimeField(default=datetime.utcnow)
-    name = db.StringField(required=True)
-    goal = db.StringField(required=True)
-    relevantEvents = db.ListField(db.StringField(), default=list)
-    status = db.ReferenceField(WorkflowStatus)
-    workflowRuns = db.ListField(db.ReferenceField('WorkflowRun'), default=list)
+CORS(app)
 
 
-class WorkflowRun(db.Document):
-    meta = {'collection': 'workflowrun'}
-    createdAt = db.DateTimeField(default=datetime.utcnow)
-    updatedAt = db.DateTimeField(default=datetime.utcnow)
-    workflow = db.ReferenceField(Workflow)
-    worflowId = db.StringField()
-    triggeredBy = db.StringField()
+app.config["MONGO_URI"] = "mongodb+srv://passage:passage@passage.nqhlfcy.mongodb.net/hackathon"
+mongo = PyMongo(app)
+# make sure collection name is right
+workflow_db=mongo.db["Model"]
+
+# class WorkflowStatus(db.Document):
+#     name = db.StringField(choices=["FetchingData", "ProcessingData", "Training", "Ready"])
+
+# class Workflow(db.Document):
+#     createdAt = db.DateTimeField(default=datetime.utcnow)
+#     updatedAt = db.DateTimeField(default=datetime.utcnow)
+#     name = db.StringField(required=True)
+#     goal = db.StringField(required=True)
+#     relevantEvents = db.ListField(db.StringField(), default=list)
+#     status = db.ReferenceField(WorkflowStatus)
+#     workflowRuns = db.ListField(db.ReferenceField('WorkflowRun'), default=list)
+
+
+# class WorkflowRun(db.Document):
+    # meta = {'collection': 'workflowrun'}
+    # createdAt = db.DateTimeField(default=datetime.utcnow)
+    # updatedAt = db.DateTimeField(default=datetime.utcnow)
+    # workflow = db.ReferenceField(Workflow)
+    # worflowId = db.StringField()
+    # triggeredBy = db.StringField()
 
 
 
 # event types
-event_types=['Start Session' 'Receive Push Notification' 'Main Landing Screen'
- 'Edit Profile' 'End Session' 'Search Contacts' 'Search Channels'
- 'Send Message' 'Create Channel' 'Invite Contact To Channel'
- 'React with Emoji' 'Invite New Contact' 'Join Channel'
- 'Subscription Landing Screen' 'Search Message History'
- 'View Account Analytics' 'Welcome' 'Activate Account' 'User Sign Up'
- 'Add Integration' 'Contact Sales' 'Cancel Subscription'
- 'Upgrade Subscription' 'Renew Subscription' 'Submit Support Request'
- 'Error Screen']
+# event_types=['Start Session' 'Receive Push Notification' 'Main Landing Screen'
+#  'Edit Profile' 'End Session' 'Search Contacts' 'Search Channels'
+#  'Send Message' 'Create Channel' 'Invite Contact To Channel'
+#  'React with Emoji' 'Invite New Contact' 'Join Channel'
+#  'Subscription Landing Screen' 'Search Message History'
+#  'View Account Analytics' 'Welcome' 'Activate Account' 'User Sign Up'
+#  'Add Integration' 'Contact Sales' 'Cancel Subscription'
+#  'Upgrade Subscription' 'Renew Subscription' 'Submit Support Request'
+#  'Error Screen']
+event_types=['Cancel Subscription',
+ 'Start Session',
+ 'Renew Subscription',
+ 'Receive Push Notification',
+ 'Subscription Landing Screen']
+
 
 def start_workflow(workflowId):
   workflow_collection = db["Workflow"]
@@ -70,14 +77,17 @@ def load_data_from_mongodb(collection_name, query={}, no_id=True):
     
     # Connect to MongoDB
 
-    collection = db[collection_name]
-
+    collection = mongo.db[collection_name]
+    print(collection)
+    print("found collection")
     # Execute the query
     cursor = collection.find(query)
-
+    print(cursor)
+    print("found query")
     # Load the data to a pandas DataFrame
+    
     df = pd.DataFrame(list(cursor))
-
+    print("Loaded into dataframe")
     # Delete the _id column
     if no_id:
         del df['_id']
@@ -154,76 +164,95 @@ def extract_base_features(df, event_types):
 def join_features_with_salesforceData(features_df, result_key, result_value):
     # Connect to MongoDB
     
-    accountsCollection = db["SalesforceData_accounts"]
-    opportunitiesCollection = db["SalesforceData_opportunities"]
+    # accountsCollection = mongo.db["SalesforceData_accounts"]
+    # opportunitiesCollection = mongo.db["SalesforceData_opportunities"]
 
 
-    # Query the salesforce_contacts collection
-    contacts = pd.DataFrame(list(accountsCollection.find({})))
+    # # Query the salesforce_contacts collection
 
-    # Rename the 'Name' column in contacts to 'organization_name'
-    contacts.rename(columns={'Name': 'organization_name'}, inplace=True)
+    # contacts = pd.DataFrame(list(accountsCollection.find({})))
 
-    # Keep only the required columns
-    contacts = contacts[['organization_name', 'Industry', 'AnnualRevenue', 'NumberOfEmployees']]
+    # # Rename the 'Name' column in contacts to 'organization_name'
+    # contacts.rename(columns={'Name': 'organization_name'}, inplace=True)
 
-    # Query the Opportunities collection
-    opportunities = pd.DataFrame(list(opportunitiesCollection.find({})))
+    # # Keep only the required columns
+    # contacts = contacts[['organization_name', 'Industry', 'AnnualRevenue', 'NumberOfEmployees']]
 
-    # Convert the 'CloseDate' column to datetime format
-    opportunities['CloseDate'] = pd.to_datetime(opportunities['CloseDate'])
+    # # Query the Opportunities collection
+    # print("Oppurtunities collection")
+    # print(opportunitiesCollection)
+    # opportunities = pd.DataFrame(list(opportunitiesCollection.find({}).limit(100000)))
+    # print("got oppurtunities")
 
-    # Filter the opportunities to only include closed opportunities
-    closed_opportunities = opportunities[opportunities['StageName'] == 'Closed']
+    # # Convert the 'CloseDate' column to datetime format
+    # opportunities['CloseDate'] = pd.to_datetime(opportunities['CloseDate'])
 
-    # Calculate the number of closed opportunities for each organization
-    num_closed_opportunities = closed_opportunities.groupby('organization_name').size()
+    # # Filter the opportunities to only include closed opportunities
+    # closed_opportunities = opportunities[opportunities['StageName'] == 'Closed']
 
-    # Calculate the most recent contract value for each organization
-    most_recent_contract_value = closed_opportunities.sort_values('CloseDate').groupby('organization_name').last()['Amount']
+    # # Calculate the number of closed opportunities for each organization
+    # num_closed_opportunities = closed_opportunities.groupby('organization_name').size()
 
-    # Calculate the average contract value for each organization
-    average_contract_value = closed_opportunities.groupby('organization_name')['Amount'].mean()
+    # # Calculate the most recent contract value for each organization
+    # most_recent_contract_value = closed_opportunities.sort_values('CloseDate').groupby('organization_name').last()['Amount']
 
-    # Determine whether the most recent opportunity for each organization ended with 'StageName' = 'Closed'
-    most_recent_opportunity_stage = opportunities.sort_values('CloseDate').groupby('organization_name').last()[result_key]
-    result = most_recent_opportunity_stage == result_value
+    # # Calculate the average contract value for each organization
+    # average_contract_value = closed_opportunities.groupby('organization_name')['Amount'].mean()
 
-    # Add these features to the contacts DataFrame
-    contacts['num_closed_opportunities'] = contacts['organization_name'].map(num_closed_opportunities)
-    contacts['contract_value'] = contacts['organization_name'].map(most_recent_contract_value)
-    contacts['average_contract_value'] = contacts['organization_name'].map(average_contract_value)
-    contacts['result'] = contacts['organization_name'].map(result)
+    # # Determine whether the most recent opportunity for each organization ended with 'StageName' = 'Closed'
+    # most_recent_opportunity_stage = opportunities.sort_values('CloseDate').groupby('organization_name').last()[result_key]
+    # result = most_recent_opportunity_stage == result_value
 
-    # Join the features DataFrame with the contacts DataFrame
-    joined_df = pd.merge(features_df, contacts, on='organization_name', how='inner')
+    # # Add these features to the contacts DataFrame
+    # contacts['num_closed_opportunities'] = contacts['organization_name'].map(num_closed_opportunities)
+    # contacts['contract_value'] = contacts['organization_name'].map(most_recent_contract_value)
+    # contacts['average_contract_value'] = contacts['organization_name'].map(average_contract_value)
+    # contacts['result'] = contacts['organization_name'].map(result)
 
+    # # Join the features DataFrame with the contacts DataFrame
+    # joined_df = pd.merge(features_df, contacts, on='organization_name', how='inner')
+    # GOING TO PICKLE JOINED DF
+    joined_df=pd.read_pickle('joined_df.pkl')
     return joined_df
 
 
-def dataPreprocessing(workflow):
+def dataPreprocessing(workflow_id):
     # SET TO FETCHING DATA
-    
-    workflow.update(status="FetchingData")
+    print(workflow_id)
+    updated_status = {"$set": {'status' : "FetchingData"}}
+    filt = {'_id' : ObjectId(workflow_id)}
+    workflow_db.update_one(filt, updated_status)
 
-    collection_frame= load_data_from_mongodb("Amplitude_data")
+
+    # print("done3")
+    # collection_frame= load_data_from_mongodb("Amplitude_data")
+    # print("done4")
+    # save_df_to_pickle(collection_frame, 'Amplitude_data.pkl')
     
-    save_df_to_pickle(collection_frame, 'Amplitude_data.pkl')
+    # READ PKLED DATA
+    # collection_frame = pd.read_pickle('Amplitude_data.pkl')
+    
     # SET TO PROCESSING DATA
-    workflow.update(status="ProcessingData")
-    extracted_features = extract_base_features(collection_frame, event_types)
+    updated_status = {"$set": {'status' : "ProcessingData"}}
+    filt = {'_id' : ObjectId(workflow_id)}
+    workflow_db.update_one(filt, updated_status)
+
+    # extracted_features = extract_base_features(collection_frame, event_types)
     
-    # what are stageName and Won
-    final_df = join_features_with_salesforceData(extracted_features, "StageName", "Won")
-    flattenedDf = final_df.copy()
+    # # what are stageName and Won
+    # final_df = join_features_with_salesforceData(extracted_features, "StageName", "Won")
+    # print("got final df")
+    # flattenedDf = final_df.copy()
 
-    flattenedDf.columns = final_df.columns.map(lambda x: '_'.join(map(str, x)) if isinstance(x, tuple) else x)
+    # flattenedDf.columns = final_df.columns.map(lambda x: '_'.join(map(str, x)) if isinstance(x, tuple) else x)
 
-    flattenedDf = flattenedDf.drop("organization_name", axis=1)
-
-    dummyDf = pd.get_dummies(flattenedDf, columns=['Industry'])
-
-    # print(dummyDf)
+    # flattenedDf = flattenedDf.drop("organization_name", axis=1)
+    # print(flattenedDf.columns)
+    # print(flattenedDf)
+    # dummyDf = pd.get_dummies(flattenedDf, columns=['Industry'])
+    dummyDf=pd.read_pickle("dummyDf.pkl")
+    print("Dummydf")
+    print(dummyDf.columns)
 
     # Prepare the data
     X = dummyDf.drop('result', axis=1)
@@ -231,6 +260,7 @@ def dataPreprocessing(workflow):
 
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    print("got the splits")
     return X_train, X_test, y_train, y_test
 
 
@@ -240,11 +270,11 @@ def hello_world():
 
 @app.route("/model/<workflow_id>/train", methods=["POST"])
 def train_workflow(workflow_id):
-    workflow=Workflow.objects(id=workflow_id).first()
     
     # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test =dataPreprocessing(workflow)
-
+    print("Done1")
+    X_train, X_test, y_train, y_test =dataPreprocessing(workflow_id)
+    print("Done2")
     # Convert the data into DMatrix format for XGBoost
     dtrain = xgb.DMatrix(X_train, label=y_train)
    
@@ -262,16 +292,23 @@ def train_workflow(workflow_id):
 
     # Train the XGBoost model
     # SET TO TRAINING DATA
-    workflow.update(status="Training")
+    updated_status = {"$set": {'status' : "Training"}}
+    filt = {'_id' : ObjectId(workflow_id)}
+    workflow_db.update_one(filt, updated_status)
+
+
     bst = xgb.train(param, dtrain, num_round)
     
     # SET TO READY
-    workflow.update(status="Ready")
+    updated_status = {"$set": {'status' : "Ready"}}
+    filt = {'_id' : ObjectId(workflow_id)}
+    workflow_db.update_one(filt, updated_status)
 
     # STORE BST
     with open('model.pkl'+workflow_id, 'wb') as f:
         pickle.dump(bst, f)
     # WHAT DO WE RETURN HERE
+    return jsonify({"done":"done"})
 
 
 
@@ -281,13 +318,16 @@ def train_workflow(workflow_id):
 @app.route("/model/<workflow_id>/run", methods=["POST"])
 def get_workflow(workflow_id):
     # LOAD IN TREE
-    workflow=Workflow.objects(id=workflow_id).first()
+    
     bst=None
     with open('model.pkl'+workflow_id, 'rb') as f:
         bst = pickle.load(f)
     
-    X_train, X_test, y_train, y_test =dataPreprocessing(workflow)
-    workflow.update(status="Ready")
+    X_train, X_test, y_train, y_test =dataPreprocessing(workflow_id)
+
+    updated_status = {"$set": {'status' : "Ready"}}
+    filt = {'_id' : ObjectId(workflow_id)}
+    workflow_db.update_one(filt, updated_status)
     # Convert the data into DMatrix format for XGBoost
    
     dtest = xgb.DMatrix(X_test, label=y_test)
@@ -296,13 +336,40 @@ def get_workflow(workflow_id):
     preds = bst.predict(dtest)
     preds_binary = [1 if pred > .9 else 0 for pred in preds]
     # print(preds_binary)
-    print( [x for x in y_test if x == False])
-    print([p for p in preds_binary if p == 0])
+    # print( [x for x in y_test if x == False])
+    # print([p for p in preds_binary if p == 0])
     accuracy = accuracy_score(y_test, preds_binary)
 
     # print(f"Accuracy: {accuracy}")
-    return jsonify({"accuracy":accuracy})
+    updated_accuracy = {"$set": {'accuracy' : accuracy}}
+    filt = {'_id' : ObjectId(workflow_id)}
+    workflow_db.update_one(filt, updated_accuracy)
+    print(request.json.get('triggeredBy'))
+    print("ran succesfully")
+
+    explainer = shap.TreeExplainer(bst)
     
+    shap_values = explainer.shap_values(X_test)
+    print("ABOUT TO GET SHAP VALUES")
+    # Get the SHAP values for the first instance
+    shap_values_first_instance = shap_values[0,:]
+
+    # Create a DataFrame with the feature names and SHAP values
+    df_shap_values = pd.DataFrame(list(zip(X_test.columns, shap_values_first_instance)), columns=['Feature', 'SHAP Value'])
+    
+    modelRunObject={
+        "createdAt":datetime.now(),
+        "updatedAt":datetime.now(),
+        "modelId":workflow_id,
+        "triggeredBy":request.json.get('triggeredBy'),
+        "explanation":df_shap_values.to_json(orient='records')
+    } 
+    result=mongo.db["ModelRun"].insert_one(modelRunObject)
+    newId=result.inserted_id
+    
+    # print(result.inserted_id)
+    return jsonify({"accuracy":accuracy,"id":str(newId)})
+
 
     # # Get the SHAP values for the first instance
     # shap_values_first_instance = shap_values[0,:]
