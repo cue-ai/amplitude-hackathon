@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated"
+  // output   = "./generated"
 }
 
 datasource db {
@@ -24,8 +24,9 @@ model Model {
   updatedAt      DateTime    @updatedAt
   name           String
   goal           String
-  relevantEvents String[]
+  relevantEvents String[]    @default([])
   status         ModelStatus
+  accuracy       Float?
 
   workflowRuns ModelRun[]
 }
@@ -35,8 +36,10 @@ model ModelRun {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  workflow   Model  @relation(fields: [workflowId], references: [id])
-  workflowId String @db.ObjectId
+  model   Model  @relation(fields: [modelId], references: [id])
+  modelId String @db.ObjectId
 
   triggeredBy String // The contact ID that triggered this model
+  output      Float?
+  explanation Json?
 }

@@ -24,6 +24,7 @@ export type Model = {
   goal: string
   relevantEvents: string[]
   status: ModelStatus
+  accuracy: number | null
 }
 
 /**
@@ -36,6 +37,7 @@ export type ModelRun = {
   updatedAt: Date
   workflowId: string
   triggeredBy: string
+  output: boolean
 }
 
 
@@ -846,8 +848,18 @@ export namespace Prisma {
 
   export type AggregateModel = {
     _count: ModelCountAggregateOutputType | null
+    _avg: ModelAvgAggregateOutputType | null
+    _sum: ModelSumAggregateOutputType | null
     _min: ModelMinAggregateOutputType | null
     _max: ModelMaxAggregateOutputType | null
+  }
+
+  export type ModelAvgAggregateOutputType = {
+    accuracy: number | null
+  }
+
+  export type ModelSumAggregateOutputType = {
+    accuracy: number | null
   }
 
   export type ModelMinAggregateOutputType = {
@@ -857,6 +869,7 @@ export namespace Prisma {
     name: string | null
     goal: string | null
     status: ModelStatus | null
+    accuracy: number | null
   }
 
   export type ModelMaxAggregateOutputType = {
@@ -866,6 +879,7 @@ export namespace Prisma {
     name: string | null
     goal: string | null
     status: ModelStatus | null
+    accuracy: number | null
   }
 
   export type ModelCountAggregateOutputType = {
@@ -876,9 +890,18 @@ export namespace Prisma {
     goal: number
     relevantEvents: number
     status: number
+    accuracy: number
     _all: number
   }
 
+
+  export type ModelAvgAggregateInputType = {
+    accuracy?: true
+  }
+
+  export type ModelSumAggregateInputType = {
+    accuracy?: true
+  }
 
   export type ModelMinAggregateInputType = {
     id?: true
@@ -887,6 +910,7 @@ export namespace Prisma {
     name?: true
     goal?: true
     status?: true
+    accuracy?: true
   }
 
   export type ModelMaxAggregateInputType = {
@@ -896,6 +920,7 @@ export namespace Prisma {
     name?: true
     goal?: true
     status?: true
+    accuracy?: true
   }
 
   export type ModelCountAggregateInputType = {
@@ -906,6 +931,7 @@ export namespace Prisma {
     goal?: true
     relevantEvents?: true
     status?: true
+    accuracy?: true
     _all?: true
   }
 
@@ -947,6 +973,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ModelAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ModelSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ModelMinAggregateInputType
@@ -977,6 +1015,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ModelCountAggregateInputType | true
+    _avg?: ModelAvgAggregateInputType
+    _sum?: ModelSumAggregateInputType
     _min?: ModelMinAggregateInputType
     _max?: ModelMaxAggregateInputType
   }
@@ -990,7 +1030,10 @@ export namespace Prisma {
     goal: string
     relevantEvents: string[]
     status: ModelStatus
+    accuracy: number | null
     _count: ModelCountAggregateOutputType | null
+    _avg: ModelAvgAggregateOutputType | null
+    _sum: ModelSumAggregateOutputType | null
     _min: ModelMinAggregateOutputType | null
     _max: ModelMaxAggregateOutputType | null
   }
@@ -1017,6 +1060,7 @@ export namespace Prisma {
     goal?: boolean
     relevantEvents?: boolean
     status?: boolean
+    accuracy?: boolean
     workflowRuns?: boolean | Model$workflowRunsArgs
     _count?: boolean | ModelCountOutputTypeArgs
   }
@@ -1880,6 +1924,7 @@ export namespace Prisma {
     updatedAt: Date | null
     workflowId: string | null
     triggeredBy: string | null
+    output: boolean | null
   }
 
   export type ModelRunMaxAggregateOutputType = {
@@ -1888,6 +1933,7 @@ export namespace Prisma {
     updatedAt: Date | null
     workflowId: string | null
     triggeredBy: string | null
+    output: boolean | null
   }
 
   export type ModelRunCountAggregateOutputType = {
@@ -1896,6 +1942,7 @@ export namespace Prisma {
     updatedAt: number
     workflowId: number
     triggeredBy: number
+    output: number
     _all: number
   }
 
@@ -1906,6 +1953,7 @@ export namespace Prisma {
     updatedAt?: true
     workflowId?: true
     triggeredBy?: true
+    output?: true
   }
 
   export type ModelRunMaxAggregateInputType = {
@@ -1914,6 +1962,7 @@ export namespace Prisma {
     updatedAt?: true
     workflowId?: true
     triggeredBy?: true
+    output?: true
   }
 
   export type ModelRunCountAggregateInputType = {
@@ -1922,6 +1971,7 @@ export namespace Prisma {
     updatedAt?: true
     workflowId?: true
     triggeredBy?: true
+    output?: true
     _all?: true
   }
 
@@ -2004,6 +2054,7 @@ export namespace Prisma {
     updatedAt: Date
     workflowId: string
     triggeredBy: string
+    output: boolean
     _count: ModelRunCountAggregateOutputType | null
     _min: ModelRunMinAggregateOutputType | null
     _max: ModelRunMaxAggregateOutputType | null
@@ -2029,6 +2080,7 @@ export namespace Prisma {
     updatedAt?: boolean
     workflowId?: boolean
     triggeredBy?: boolean
+    output?: boolean
     workflow?: boolean | ModelArgs
   }
 
@@ -2862,7 +2914,8 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     workflowId: 'workflowId',
-    triggeredBy: 'triggeredBy'
+    triggeredBy: 'triggeredBy',
+    output: 'output'
   };
 
   export type ModelRunScalarFieldEnum = (typeof ModelRunScalarFieldEnum)[keyof typeof ModelRunScalarFieldEnum]
@@ -2875,7 +2928,8 @@ export namespace Prisma {
     name: 'name',
     goal: 'goal',
     relevantEvents: 'relevantEvents',
-    status: 'status'
+    status: 'status',
+    accuracy: 'accuracy'
   };
 
   export type ModelScalarFieldEnum = (typeof ModelScalarFieldEnum)[keyof typeof ModelScalarFieldEnum]
@@ -2913,6 +2967,7 @@ export namespace Prisma {
     goal?: StringFilter | string
     relevantEvents?: StringNullableListFilter
     status?: EnumModelStatusFilter | ModelStatus
+    accuracy?: FloatNullableFilter | number | null
     workflowRuns?: ModelRunListRelationFilter
   }
 
@@ -2924,6 +2979,7 @@ export namespace Prisma {
     goal?: SortOrder
     relevantEvents?: SortOrder
     status?: SortOrder
+    accuracy?: SortOrder
     workflowRuns?: ModelRunOrderByRelationAggregateInput
   }
 
@@ -2939,9 +2995,12 @@ export namespace Prisma {
     goal?: SortOrder
     relevantEvents?: SortOrder
     status?: SortOrder
+    accuracy?: SortOrder
     _count?: ModelCountOrderByAggregateInput
+    _avg?: ModelAvgOrderByAggregateInput
     _max?: ModelMaxOrderByAggregateInput
     _min?: ModelMinOrderByAggregateInput
+    _sum?: ModelSumOrderByAggregateInput
   }
 
   export type ModelScalarWhereWithAggregatesInput = {
@@ -2955,6 +3014,7 @@ export namespace Prisma {
     goal?: StringWithAggregatesFilter | string
     relevantEvents?: StringNullableListFilter
     status?: EnumModelStatusWithAggregatesFilter | ModelStatus
+    accuracy?: FloatNullableWithAggregatesFilter | number | null
   }
 
   export type ModelRunWhereInput = {
@@ -2966,6 +3026,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter | Date | string
     workflowId?: StringFilter | string
     triggeredBy?: StringFilter | string
+    output?: BoolFilter | boolean
     workflow?: XOR<ModelRelationFilter, ModelWhereInput>
   }
 
@@ -2975,6 +3036,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     workflowId?: SortOrder
     triggeredBy?: SortOrder
+    output?: SortOrder
     workflow?: ModelOrderByWithRelationInput
   }
 
@@ -2988,6 +3050,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     workflowId?: SortOrder
     triggeredBy?: SortOrder
+    output?: SortOrder
     _count?: ModelRunCountOrderByAggregateInput
     _max?: ModelRunMaxOrderByAggregateInput
     _min?: ModelRunMinOrderByAggregateInput
@@ -3002,6 +3065,7 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter | Date | string
     workflowId?: StringWithAggregatesFilter | string
     triggeredBy?: StringWithAggregatesFilter | string
+    output?: BoolWithAggregatesFilter | boolean
   }
 
   export type ModelCreateInput = {
@@ -3012,6 +3076,7 @@ export namespace Prisma {
     goal: string
     relevantEvents?: ModelCreaterelevantEventsInput | Enumerable<string>
     status: ModelStatus
+    accuracy?: number | null
     workflowRuns?: ModelRunCreateNestedManyWithoutWorkflowInput
   }
 
@@ -3023,6 +3088,7 @@ export namespace Prisma {
     goal: string
     relevantEvents?: ModelCreaterelevantEventsInput | Enumerable<string>
     status: ModelStatus
+    accuracy?: number | null
     workflowRuns?: ModelRunUncheckedCreateNestedManyWithoutWorkflowInput
   }
 
@@ -3033,6 +3099,7 @@ export namespace Prisma {
     goal?: StringFieldUpdateOperationsInput | string
     relevantEvents?: ModelUpdaterelevantEventsInput | Enumerable<string>
     status?: EnumModelStatusFieldUpdateOperationsInput | ModelStatus
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
     workflowRuns?: ModelRunUpdateManyWithoutWorkflowNestedInput
   }
 
@@ -3043,6 +3110,7 @@ export namespace Prisma {
     goal?: StringFieldUpdateOperationsInput | string
     relevantEvents?: ModelUpdaterelevantEventsInput | Enumerable<string>
     status?: EnumModelStatusFieldUpdateOperationsInput | ModelStatus
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
     workflowRuns?: ModelRunUncheckedUpdateManyWithoutWorkflowNestedInput
   }
 
@@ -3054,6 +3122,7 @@ export namespace Prisma {
     goal: string
     relevantEvents?: ModelCreaterelevantEventsInput | Enumerable<string>
     status: ModelStatus
+    accuracy?: number | null
   }
 
   export type ModelUpdateManyMutationInput = {
@@ -3063,6 +3132,7 @@ export namespace Prisma {
     goal?: StringFieldUpdateOperationsInput | string
     relevantEvents?: ModelUpdaterelevantEventsInput | Enumerable<string>
     status?: EnumModelStatusFieldUpdateOperationsInput | ModelStatus
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ModelUncheckedUpdateManyInput = {
@@ -3072,6 +3142,7 @@ export namespace Prisma {
     goal?: StringFieldUpdateOperationsInput | string
     relevantEvents?: ModelUpdaterelevantEventsInput | Enumerable<string>
     status?: EnumModelStatusFieldUpdateOperationsInput | ModelStatus
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ModelRunCreateInput = {
@@ -3079,6 +3150,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     triggeredBy: string
+    output: boolean
     workflow: ModelCreateNestedOneWithoutWorkflowRunsInput
   }
 
@@ -3088,12 +3160,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     workflowId: string
     triggeredBy: string
+    output: boolean
   }
 
   export type ModelRunUpdateInput = {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     triggeredBy?: StringFieldUpdateOperationsInput | string
+    output?: BoolFieldUpdateOperationsInput | boolean
     workflow?: ModelUpdateOneRequiredWithoutWorkflowRunsNestedInput
   }
 
@@ -3102,6 +3176,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workflowId?: StringFieldUpdateOperationsInput | string
     triggeredBy?: StringFieldUpdateOperationsInput | string
+    output?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ModelRunCreateManyInput = {
@@ -3110,12 +3185,14 @@ export namespace Prisma {
     updatedAt?: Date | string
     workflowId: string
     triggeredBy: string
+    output: boolean
   }
 
   export type ModelRunUpdateManyMutationInput = {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     triggeredBy?: StringFieldUpdateOperationsInput | string
+    output?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ModelRunUncheckedUpdateManyInput = {
@@ -3123,6 +3200,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workflowId?: StringFieldUpdateOperationsInput | string
     triggeredBy?: StringFieldUpdateOperationsInput | string
+    output?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type StringFilter = {
@@ -3166,6 +3244,18 @@ export namespace Prisma {
     not?: NestedEnumModelStatusFilter | ModelStatus
   }
 
+  export type FloatNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedFloatNullableFilter | number | null
+    isSet?: boolean
+  }
+
   export type ModelRunListRelationFilter = {
     every?: ModelRunWhereInput
     some?: ModelRunWhereInput
@@ -3184,6 +3274,11 @@ export namespace Prisma {
     goal?: SortOrder
     relevantEvents?: SortOrder
     status?: SortOrder
+    accuracy?: SortOrder
+  }
+
+  export type ModelAvgOrderByAggregateInput = {
+    accuracy?: SortOrder
   }
 
   export type ModelMaxOrderByAggregateInput = {
@@ -3193,6 +3288,7 @@ export namespace Prisma {
     name?: SortOrder
     goal?: SortOrder
     status?: SortOrder
+    accuracy?: SortOrder
   }
 
   export type ModelMinOrderByAggregateInput = {
@@ -3202,6 +3298,11 @@ export namespace Prisma {
     name?: SortOrder
     goal?: SortOrder
     status?: SortOrder
+    accuracy?: SortOrder
+  }
+
+  export type ModelSumOrderByAggregateInput = {
+    accuracy?: SortOrder
   }
 
   export type StringWithAggregatesFilter = {
@@ -3246,6 +3347,28 @@ export namespace Prisma {
     _max?: NestedEnumModelStatusFilter
   }
 
+  export type FloatNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedFloatNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedFloatNullableFilter
+    _min?: NestedFloatNullableFilter
+    _max?: NestedFloatNullableFilter
+    isSet?: boolean
+  }
+
+  export type BoolFilter = {
+    equals?: boolean
+    not?: NestedBoolFilter | boolean
+  }
+
   export type ModelRelationFilter = {
     is?: ModelWhereInput
     isNot?: ModelWhereInput
@@ -3257,6 +3380,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     workflowId?: SortOrder
     triggeredBy?: SortOrder
+    output?: SortOrder
   }
 
   export type ModelRunMaxOrderByAggregateInput = {
@@ -3265,6 +3389,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     workflowId?: SortOrder
     triggeredBy?: SortOrder
+    output?: SortOrder
   }
 
   export type ModelRunMinOrderByAggregateInput = {
@@ -3273,6 +3398,15 @@ export namespace Prisma {
     updatedAt?: SortOrder
     workflowId?: SortOrder
     triggeredBy?: SortOrder
+    output?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter = {
+    equals?: boolean
+    not?: NestedBoolWithAggregatesFilter | boolean
+    _count?: NestedIntFilter
+    _min?: NestedBoolFilter
+    _max?: NestedBoolFilter
   }
 
   export type ModelCreaterelevantEventsInput = {
@@ -3310,6 +3444,15 @@ export namespace Prisma {
     set?: ModelStatus
   }
 
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+    unset?: boolean
+  }
+
   export type ModelRunUpdateManyWithoutWorkflowNestedInput = {
     create?: XOR<Enumerable<ModelRunCreateWithoutWorkflowInput>, Enumerable<ModelRunUncheckedCreateWithoutWorkflowInput>>
     connectOrCreate?: Enumerable<ModelRunCreateOrConnectWithoutWorkflowInput>
@@ -3342,6 +3485,10 @@ export namespace Prisma {
     create?: XOR<ModelCreateWithoutWorkflowRunsInput, ModelUncheckedCreateWithoutWorkflowRunsInput>
     connectOrCreate?: ModelCreateOrConnectWithoutWorkflowRunsInput
     connect?: ModelWhereUniqueInput
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type ModelUpdateOneRequiredWithoutWorkflowRunsNestedInput = {
@@ -3382,6 +3529,18 @@ export namespace Prisma {
     in?: Enumerable<ModelStatus>
     notIn?: Enumerable<ModelStatus>
     not?: NestedEnumModelStatusFilter | ModelStatus
+  }
+
+  export type NestedFloatNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedFloatNullableFilter | number | null
+    isSet?: boolean
   }
 
   export type NestedStringWithAggregatesFilter = {
@@ -3436,11 +3595,54 @@ export namespace Prisma {
     _max?: NestedEnumModelStatusFilter
   }
 
+  export type NestedFloatNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedFloatNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedFloatNullableFilter
+    _min?: NestedFloatNullableFilter
+    _max?: NestedFloatNullableFilter
+    isSet?: boolean
+  }
+
+  export type NestedIntNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableFilter | number | null
+    isSet?: boolean
+  }
+
+  export type NestedBoolFilter = {
+    equals?: boolean
+    not?: NestedBoolFilter | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter = {
+    equals?: boolean
+    not?: NestedBoolWithAggregatesFilter | boolean
+    _count?: NestedIntFilter
+    _min?: NestedBoolFilter
+    _max?: NestedBoolFilter
+  }
+
   export type ModelRunCreateWithoutWorkflowInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     triggeredBy: string
+    output: boolean
   }
 
   export type ModelRunUncheckedCreateWithoutWorkflowInput = {
@@ -3448,6 +3650,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     triggeredBy: string
+    output: boolean
   }
 
   export type ModelRunCreateOrConnectWithoutWorkflowInput = {
@@ -3484,6 +3687,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter | Date | string
     workflowId?: StringFilter | string
     triggeredBy?: StringFilter | string
+    output?: BoolFilter | boolean
   }
 
   export type ModelCreateWithoutWorkflowRunsInput = {
@@ -3494,6 +3698,7 @@ export namespace Prisma {
     goal: string
     relevantEvents?: ModelCreaterelevantEventsInput | Enumerable<string>
     status: ModelStatus
+    accuracy?: number | null
   }
 
   export type ModelUncheckedCreateWithoutWorkflowRunsInput = {
@@ -3504,6 +3709,7 @@ export namespace Prisma {
     goal: string
     relevantEvents?: ModelCreaterelevantEventsInput | Enumerable<string>
     status: ModelStatus
+    accuracy?: number | null
   }
 
   export type ModelCreateOrConnectWithoutWorkflowRunsInput = {
@@ -3523,6 +3729,7 @@ export namespace Prisma {
     goal?: StringFieldUpdateOperationsInput | string
     relevantEvents?: ModelUpdaterelevantEventsInput | Enumerable<string>
     status?: EnumModelStatusFieldUpdateOperationsInput | ModelStatus
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ModelUncheckedUpdateWithoutWorkflowRunsInput = {
@@ -3532,6 +3739,7 @@ export namespace Prisma {
     goal?: StringFieldUpdateOperationsInput | string
     relevantEvents?: ModelUpdaterelevantEventsInput | Enumerable<string>
     status?: EnumModelStatusFieldUpdateOperationsInput | ModelStatus
+    accuracy?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type ModelRunCreateManyWorkflowInput = {
@@ -3539,24 +3747,28 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     triggeredBy: string
+    output: boolean
   }
 
   export type ModelRunUpdateWithoutWorkflowInput = {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     triggeredBy?: StringFieldUpdateOperationsInput | string
+    output?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ModelRunUncheckedUpdateWithoutWorkflowInput = {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     triggeredBy?: StringFieldUpdateOperationsInput | string
+    output?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ModelRunUncheckedUpdateManyWithoutWorkflowRunsInput = {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     triggeredBy?: StringFieldUpdateOperationsInput | string
+    output?: BoolFieldUpdateOperationsInput | boolean
   }
 
 

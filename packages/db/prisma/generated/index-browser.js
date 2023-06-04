@@ -91,7 +91,8 @@ exports.Prisma.ModelRunScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   workflowId: 'workflowId',
-  triggeredBy: 'triggeredBy'
+  triggeredBy: 'triggeredBy',
+  output: 'output'
 };
 
 exports.Prisma.ModelScalarFieldEnum = {
@@ -101,7 +102,8 @@ exports.Prisma.ModelScalarFieldEnum = {
   name: 'name',
   goal: 'goal',
   relevantEvents: 'relevantEvents',
-  status: 'status'
+  status: 'status',
+  accuracy: 'accuracy'
 };
 
 exports.Prisma.QueryMode = {

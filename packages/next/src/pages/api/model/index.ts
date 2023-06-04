@@ -1,6 +1,8 @@
 import { type NextApiHandler } from "next";
 import { z } from "zod";
 import { prisma } from "@hackathon/db";
+import axios from "axios";
+import { env } from "@/env.mjs";
 
 export const CreateWorkflowBodySchema = z.object({
   name: z.string(),
@@ -23,7 +25,7 @@ const CreateWorkflowHandler: NextApiHandler = async (req, res) => {
     },
   });
 
-  // await axios.post(`${env.BACKEND_URL}/model/${model.id}/train`);
+  void axios.post(`${env.BACKEND_URL}/model/${model.id}/train`);
 
   return res.status(200).json({ model });
 };

@@ -14,7 +14,7 @@ export const PageContainer = ({ children }: { children: ReactNode }) => (
       <Box as="nav" pb={{ base: "12", md: "24" }}>
         <Flex>
           <Text ml={2} fontWeight="bold">
-            Revenue Analyzer
+            EffortlessRevOpsML
           </Text>
         </Flex>
         <Divider mt={4} />

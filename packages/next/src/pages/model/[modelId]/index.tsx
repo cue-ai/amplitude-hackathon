@@ -4,14 +4,17 @@ import { LoadingCard } from "@/components/organisms/LoadingCard";
 import { useRouter } from "next/router";
 import { useSwr } from "@/hooks/useSwr";
 import { type Model } from "@hackathon/db";
+import { ModelCard } from "@/components/organisms/ModelCard";
 
 const ModelLoadingPage: NextPage = () => {
   const { modelId } = useRouter().query;
   const { data } = useSwr<{ model: Model }>(`/api/model/${modelId}`);
   return (
     <PageContainer>
-      {data?.model?.status !== "Ready" && (
+      {data?.model?.status !== "Ready" ? (
         <LoadingCard modelId={modelId as string} />
+      ) : (
+        <ModelCard modelId={modelId as string} />
       )}
     </PageContainer>
   );
