@@ -1,5 +1,5 @@
 import { type FC } from "react";
-import { Button, Flex, HStack, Text, VStack } from "@chakra-ui/react";
+import { Button, Flex, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import { FormInput } from "@/components/molecules/formInputs/FormInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,10 +69,17 @@ export const CreateModelContainer: FC<CreateWorkflowContainerProps> = ({
             placeholder="i.e. Detect churn"
           />
           <HStack spacing={3} w="full">
-            <Button size="md" w="full" isDisabled>
+            <Button size="sm" w="full" isDisabled>
+              <Image
+                mr={2}
+                w={6}
+                h={6}
+                src="https://companieslogo.com/img/orig/AMPL-501a52ff.png?t=1644176877"
+              />
               Amplitude Connected
             </Button>
-            <Button size="md" w="full" isDisabled>
+            <Button size="sm" w="full" isDisabled>
+              <Image mr={2} w={6} h={6} src="https://i.imgur.com/uJoXf2P.png" />
               Salesforce Connected
             </Button>
           </HStack>

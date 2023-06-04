@@ -24,8 +24,9 @@ model Model {
   updatedAt      DateTime    @updatedAt
   name           String
   goal           String
-  relevantEvents String[]
+  relevantEvents String[]    @default([])
   status         ModelStatus
+  accuracy       Float?
 
   workflowRuns ModelRun[]
 }
@@ -38,5 +39,6 @@ model ModelRun {
   workflow   Model  @relation(fields: [workflowId], references: [id])
   workflowId String @db.ObjectId
 
-  triggeredBy String // The contact ID that triggered this workflow
+  triggeredBy String // The contact ID that triggered this model
+  output      Boolean
 }

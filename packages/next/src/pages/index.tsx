@@ -1,30 +1,21 @@
-import { Box, Container, Divider, Flex, Text } from "@chakra-ui/react";
 import { type NextPage } from "next";
-import { ModelsContainer } from "@/components/organisms/ModelsContainer";
+import { PageContainer } from "@/components/PageContainer";
+import { ModelsCard } from "@/components/organisms/ModelsCard";
+import { CreateModelContainer } from "@/components/organisms/CreateModelContainer";
+import { useState } from "react";
 
+type Page = "Home" | "CreateNewWorkflow";
 const Home: NextPage = () => {
+  const [state, setState] = useState<Page>("Home");
+
   return (
-    <Flex
-      direction="column"
-      backgroundImage="/background.svg"
-      minH="100vh"
-      backgroundRepeat="no-repeat"
-      backgroundSize="cover"
-    >
-      <Container py={{ base: "4", lg: "5" }}>
-        <Box as="nav" pb={{ base: "12", md: "24" }}>
-          <Flex>
-            <Text ml={2} fontWeight="bold">
-              Revenue Analyzer
-            </Text>
-          </Flex>
-          <Divider mt={4} />
-        </Box>
-        <Box as="section" mt={12} h="full">
-          <ModelsContainer />
-        </Box>
-      </Container>
-    </Flex>
+    <PageContainer>
+      {state === "Home" ? (
+        <ModelsCard onCreateNewWorkflow={() => setState("CreateNewWorkflow")} />
+      ) : (
+        <CreateModelContainer back={() => setState("Home")} />
+      )}
+    </PageContainer>
   );
 };
 
