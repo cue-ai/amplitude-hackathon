@@ -2,17 +2,41 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
+  provider = "prisma-client-js"
+  output   = "./generated"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+enum WorkflowStatus {
+  FetchingData
+  ProcessingData
+  Training
+  Ready
+}
+
+model Workflow {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  name           String
+  goal           String
+  relevantEvents String[]
+  status         WorkflowStatus
+
+  workflowRuns WorkflowRun[]
+}
+
+model WorkflowRun {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workflow   Workflow @relation(fields: [workflowId], references: [id])
+  workflowId String   @db.ObjectId
+
+  triggeredBy String // The contact ID that triggered this workflow
 }
