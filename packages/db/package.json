@@ -3,12 +3,12 @@
   "version": "0.0.1",
   "packageManager": "yarn@3.5.0",
   "scripts": {
-    "generate": "yarn prisma generate",
-    "studio": "yarn prisma studio",
-    "db:generate": "yarn workspace @cue-ai/db generate"
+    "generate": "yarn pnpify prisma generate",
+    "studio": "yarn prisma studio"
   },
   "dependencies": {
     "@prisma/client": "4.13.0",
+    "@yarnpkg/pnpify": "^4.0.0-rc.45",
     "dotenv": "^16.0.3"
   },
   "devDependencies": {
