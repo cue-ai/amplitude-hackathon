@@ -38,5 +38,5 @@ model ModelRun {
   workflow   Model  @relation(fields: [workflowId], references: [id])
   workflowId String @db.ObjectId
 
-  triggeredBy String // The contact ID that triggered this workflow
+  triggeredBy String // The contact ID that triggered this model
 }

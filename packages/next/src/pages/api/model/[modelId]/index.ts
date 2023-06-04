@@ -2,21 +2,26 @@ import { type NextApiHandler } from "next";
 import { prisma } from "@hackathon/db";
 import { z } from "zod";
 
-export const WorkflowIdQuerySchema = z.object({
-  workflowId: z.string(),
+export const ModelIdQuerySchema = z.object({
+  modelId: z.string(),
 });
 
-const WorkflowIdHandler: NextApiHandler = (req, res) => {
+const WorkflowIdHandler: NextApiHandler = async (req, res) => {
   if (req.method !== "GET")
     return res.status(405).json({ message: "Method not allowed" });
 
-  const { workflowId } = WorkflowIdQuerySchema.parse(req.query);
+  console.log(req.query);
+  const { modelId } = ModelIdQuerySchema.parse(req.query);
+  console.log(modelId);
+  if (!modelId) return res.status(404).end();
 
-  return prisma.model.findFirst({
+  const model = await prisma.model.findFirst({
     where: {
-      id: workflowId,
+      id: modelId,
     },
   });
+
+  return res.status(200).json({ model });
 };
 
 export default WorkflowIdHandler;

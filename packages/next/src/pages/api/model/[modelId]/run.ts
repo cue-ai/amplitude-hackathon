@@ -1,5 +1,5 @@
 import { type NextApiHandler } from "next";
-import { WorkflowIdQuerySchema } from "@/pages/api/model/[modelId]/index";
+import { ModelIdQuerySchema } from "@/pages/api/model/[modelId]/index";
 import { z } from "zod";
 import axios from "axios";
 import { env } from "@/env.mjs";
@@ -12,12 +12,12 @@ const RunWorkflow: NextApiHandler = async (req, res) => {
   if (req.method !== "POST")
     return res.status(405).json({ message: "Method not allowed" });
 
-  const { workflowId } = WorkflowIdQuerySchema.parse(req.query);
+  const { modelId } = ModelIdQuerySchema.parse(req.query);
 
   const body = RunWorkflowBodySchema.parse(req.body);
 
   const { data } = await axios.post(
-    `${env.BACKEND_URL}/workflow/${workflowId}/run`,
+    `${env.BACKEND_URL}/model/${modelId}/run`,
     body
   );
 
