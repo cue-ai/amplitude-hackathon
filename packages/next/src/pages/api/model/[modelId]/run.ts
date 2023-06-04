@@ -1,5 +1,5 @@
 import { type NextApiHandler } from "next";
-import { WorkflowIdQuerySchema } from "@/pages/api/workfow/[workflowId]/index";
+import { WorkflowIdQuerySchema } from "@/pages/api/model/[modelId]/index";
 import { z } from "zod";
 import axios from "axios";
 import { env } from "@/env.mjs";
@@ -21,7 +21,7 @@ const RunWorkflow: NextApiHandler = async (req, res) => {
     body
   );
 
-  return res.status(200).json({ workflowRun: data });
+  return res.status(200).json({ modelRun: data });
 };
 
 export default RunWorkflow;

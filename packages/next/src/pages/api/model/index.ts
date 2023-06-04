@@ -1,31 +1,31 @@
 import { type NextApiHandler } from "next";
 import { z } from "zod";
 import { prisma } from "@hackathon/db";
-import { env } from "@/env.mjs";
-import axios from "axios";
 
 export const CreateWorkflowBodySchema = z.object({
   name: z.string(),
   goal: z.string(),
-  relevantEvents: z.string().array(),
 });
+
+export type CreateWorkflowBody = z.infer<typeof CreateWorkflowBodySchema>;
 
 const CreateWorkflowHandler: NextApiHandler = async (req, res) => {
   if (req.method !== "POST")
     return res.status(405).json({ message: "Method not allowed" });
+  console.log(req.body);
 
   const body = CreateWorkflowBodySchema.parse(req.body);
 
-  const workflow = await prisma.workflow.create({
+  const model = await prisma.model.create({
     data: {
       ...body,
       status: "FetchingData",
     },
   });
 
-  await axios.post(`${env.BACKEND_URL}/workflow/${workflow.id}`);
+  // await axios.post(`${env.BACKEND_URL}/model/${model.id}/train`);
 
-  return res.status(200).json({ workflow });
+  return res.status(200).json({ model });
 };
 
 export default CreateWorkflowHandler;

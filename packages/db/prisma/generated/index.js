@@ -90,6 +90,24 @@ const dirname = regularDirname || foundDirname || __dirname
  * Enums
  */
 
+exports.Prisma.ModelRunScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  workflowId: 'workflowId',
+  triggeredBy: 'triggeredBy'
+};
+
+exports.Prisma.ModelScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name',
+  goal: 'goal',
+  relevantEvents: 'relevantEvents',
+  status: 'status'
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -99,25 +117,7 @@ exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
 };
-
-exports.Prisma.WorkflowRunScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  workflowId: 'workflowId',
-  triggeredBy: 'triggeredBy'
-};
-
-exports.Prisma.WorkflowScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  name: 'name',
-  goal: 'goal',
-  relevantEvents: 'relevantEvents',
-  status: 'status'
-};
-exports.WorkflowStatus = {
+exports.ModelStatus = {
   FetchingData: 'FetchingData',
   ProcessingData: 'ProcessingData',
   Training: 'Training',
@@ -125,11 +125,11 @@ exports.WorkflowStatus = {
 };
 
 exports.Prisma.ModelName = {
-  Workflow: 'Workflow',
-  WorkflowRun: 'WorkflowRun'
+  Model: 'Model',
+  ModelRun: 'ModelRun'
 };
 
-const dmmfString = "{\"datamodel\":{\"enums\":[{\"name\":\"WorkflowStatus\",\"values\":[{\"name\":\"FetchingData\",\"dbName\":null},{\"name\":\"ProcessingData\",\"dbName\":null},{\"name\":\"Training\",\"dbName\":null},{\"name\":\"Ready\",\"dbName\":null}],\"dbName\":null}],\"models\":[{\"name\":\"Workflow\",\"dbName\":null,\"fields\":[{\"name\":\"id\",\"dbName\":\"_id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"default\":{\"name\":\"auto\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"DateTime\",\"default\":{\"name\":\"now\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"DateTime\",\"isGenerated\":false,\"isUpdatedAt\":true},{\"name\":\"name\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"goal\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"relevantEvents\",\"kind\":\"scalar\",\"isList\":true,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"status\",\"kind\":\"enum\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"WorkflowStatus\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"workflowRuns\",\"kind\":\"object\",\"isList\":true,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"WorkflowRun\",\"relationName\":\"WorkflowToWorkflowRun\",\"relationFromFields\":[],\"relationToFields\":[],\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false},{\"name\":\"WorkflowRun\",\"dbName\":null,\"fields\":[{\"name\":\"id\",\"dbName\":\"_id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"default\":{\"name\":\"auto\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"DateTime\",\"default\":{\"name\":\"now\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"DateTime\",\"isGenerated\":false,\"isUpdatedAt\":true},{\"name\":\"workflow\",\"kind\":\"object\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"Workflow\",\"relationName\":\"WorkflowToWorkflowRun\",\"relationFromFields\":[\"workflowId\"],\"relationToFields\":[\"id\"],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"workflowId\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":true,\"hasDefaultValue\":false,\"type\":\"String\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"triggeredBy\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false}],\"types\":[]},\"mappings\":{\"modelOperations\":[{\"model\":\"Workflow\",\"plural\":\"workflows\",\"findUnique\":\"findUniqueWorkflow\",\"findUniqueOrThrow\":\"findUniqueWorkflowOrThrow\",\"findFirst\":\"findFirstWorkflow\",\"findFirstOrThrow\":\"findFirstWorkflowOrThrow\",\"findMany\":\"findManyWorkflow\",\"create\":\"createOneWorkflow\",\"createMany\":\"createManyWorkflow\",\"delete\":\"deleteOneWorkflow\",\"update\":\"updateOneWorkflow\",\"deleteMany\":\"deleteManyWorkflow\",\"updateMany\":\"updateManyWorkflow\",\"upsert\":\"upsertOneWorkflow\",\"aggregate\":\"aggregateWorkflow\",\"groupBy\":\"groupByWorkflow\",\"findRaw\":\"findWorkflowRaw\",\"aggregateRaw\":\"aggregateWorkflowRaw\"},{\"model\":\"WorkflowRun\",\"plural\":\"workflowRuns\",\"findUnique\":\"findUniqueWorkflowRun\",\"findUniqueOrThrow\":\"findUniqueWorkflowRunOrThrow\",\"findFirst\":\"findFirstWorkflowRun\",\"findFirstOrThrow\":\"findFirstWorkflowRunOrThrow\",\"findMany\":\"findManyWorkflowRun\",\"create\":\"createOneWorkflowRun\",\"createMany\":\"createManyWorkflowRun\",\"delete\":\"deleteOneWorkflowRun\",\"update\":\"updateOneWorkflowRun\",\"deleteMany\":\"deleteManyWorkflowRun\",\"updateMany\":\"updateManyWorkflowRun\",\"upsert\":\"upsertOneWorkflowRun\",\"aggregate\":\"aggregateWorkflowRun\",\"groupBy\":\"groupByWorkflowRun\",\"findRaw\":\"findWorkflowRunRaw\",\"aggregateRaw\":\"aggregateWorkflowRunRaw\"}],\"otherOperations\":{\"read\":[],\"write\":[\"runCommandRaw\"]}}}"
+const dmmfString = "{\"datamodel\":{\"enums\":[{\"name\":\"ModelStatus\",\"values\":[{\"name\":\"FetchingData\",\"dbName\":null},{\"name\":\"ProcessingData\",\"dbName\":null},{\"name\":\"Training\",\"dbName\":null},{\"name\":\"Ready\",\"dbName\":null}],\"dbName\":null}],\"models\":[{\"name\":\"Model\",\"dbName\":null,\"fields\":[{\"name\":\"id\",\"dbName\":\"_id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"default\":{\"name\":\"auto\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"DateTime\",\"default\":{\"name\":\"now\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"DateTime\",\"isGenerated\":false,\"isUpdatedAt\":true},{\"name\":\"name\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"goal\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"relevantEvents\",\"kind\":\"scalar\",\"isList\":true,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"status\",\"kind\":\"enum\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"ModelStatus\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"workflowRuns\",\"kind\":\"object\",\"isList\":true,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"ModelRun\",\"relationName\":\"ModelToModelRun\",\"relationFromFields\":[],\"relationToFields\":[],\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false},{\"name\":\"ModelRun\",\"dbName\":null,\"fields\":[{\"name\":\"id\",\"dbName\":\"_id\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":true,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"String\",\"default\":{\"name\":\"auto\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":true,\"type\":\"DateTime\",\"default\":{\"name\":\"now\",\"args\":[]},\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"DateTime\",\"isGenerated\":false,\"isUpdatedAt\":true},{\"name\":\"workflow\",\"kind\":\"object\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"Model\",\"relationName\":\"ModelToModelRun\",\"relationFromFields\":[\"workflowId\"],\"relationToFields\":[\"id\"],\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"workflowId\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":true,\"hasDefaultValue\":false,\"type\":\"String\",\"isGenerated\":false,\"isUpdatedAt\":false},{\"name\":\"triggeredBy\",\"kind\":\"scalar\",\"isList\":false,\"isRequired\":true,\"isUnique\":false,\"isId\":false,\"isReadOnly\":false,\"hasDefaultValue\":false,\"type\":\"String\",\"isGenerated\":false,\"isUpdatedAt\":false}],\"primaryKey\":null,\"uniqueFields\":[],\"uniqueIndexes\":[],\"isGenerated\":false}],\"types\":[]},\"mappings\":{\"modelOperations\":[{\"model\":\"Model\",\"plural\":\"models\",\"findUnique\":\"findUniqueModel\",\"findUniqueOrThrow\":\"findUniqueModelOrThrow\",\"findFirst\":\"findFirstModel\",\"findFirstOrThrow\":\"findFirstModelOrThrow\",\"findMany\":\"findManyModel\",\"create\":\"createOneModel\",\"createMany\":\"createManyModel\",\"delete\":\"deleteOneModel\",\"update\":\"updateOneModel\",\"deleteMany\":\"deleteManyModel\",\"updateMany\":\"updateManyModel\",\"upsert\":\"upsertOneModel\",\"aggregate\":\"aggregateModel\",\"groupBy\":\"groupByModel\",\"findRaw\":\"findModelRaw\",\"aggregateRaw\":\"aggregateModelRaw\"},{\"model\":\"ModelRun\",\"plural\":\"modelRuns\",\"findUnique\":\"findUniqueModelRun\",\"findUniqueOrThrow\":\"findUniqueModelRunOrThrow\",\"findFirst\":\"findFirstModelRun\",\"findFirstOrThrow\":\"findFirstModelRunOrThrow\",\"findMany\":\"findManyModelRun\",\"create\":\"createOneModelRun\",\"createMany\":\"createManyModelRun\",\"delete\":\"deleteOneModelRun\",\"update\":\"updateOneModelRun\",\"deleteMany\":\"deleteManyModelRun\",\"updateMany\":\"updateManyModelRun\",\"upsert\":\"upsertOneModelRun\",\"aggregate\":\"aggregateModelRun\",\"groupBy\":\"groupByModelRun\",\"findRaw\":\"findModelRunRaw\",\"aggregateRaw\":\"aggregateModelRunRaw\"}],\"otherOperations\":{\"read\":[],\"write\":[\"runCommandRaw\"]}}}"
 const dmmf = JSON.parse(dmmfString)
 exports.Prisma.dmmf = JSON.parse(dmmfString)
 

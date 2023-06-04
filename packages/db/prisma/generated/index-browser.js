@@ -86,6 +86,24 @@ Prisma.NullTypes = {
  * Enums
  */
 
+exports.Prisma.ModelRunScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  workflowId: 'workflowId',
+  triggeredBy: 'triggeredBy'
+};
+
+exports.Prisma.ModelScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name',
+  goal: 'goal',
+  relevantEvents: 'relevantEvents',
+  status: 'status'
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -95,25 +113,7 @@ exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
 };
-
-exports.Prisma.WorkflowRunScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  workflowId: 'workflowId',
-  triggeredBy: 'triggeredBy'
-};
-
-exports.Prisma.WorkflowScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  name: 'name',
-  goal: 'goal',
-  relevantEvents: 'relevantEvents',
-  status: 'status'
-};
-exports.WorkflowStatus = {
+exports.ModelStatus = {
   FetchingData: 'FetchingData',
   ProcessingData: 'ProcessingData',
   Training: 'Training',
@@ -121,8 +121,8 @@ exports.WorkflowStatus = {
 };
 
 exports.Prisma.ModelName = {
-  Workflow: 'Workflow',
-  WorkflowRun: 'WorkflowRun'
+  Model: 'Model',
+  ModelRun: 'ModelRun'
 };
 
 /**

@@ -8,10 +8,16 @@
     "start": "next start"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.7.0",
+    "@chakra-ui/styled-system": "^2.9.1",
+    "@chakra-ui/theme-tools": "^2.0.18",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
     "@hackathon/db": "workspace:^",
     "@hookform/resolvers": "^3.1.0",
     "@t3-oss/env-nextjs": "^0.3.1",
     "axios": "^1.4.0",
+    "framer-motion": "^10.12.16",
     "next": "^13.4.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -19,6 +25,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@prisma/nextjs-monorepo-workaround-plugin": "^4.15.0",
     "@types/eslint": "^8.37.0",
     "@types/node": "^18.16.0",
     "@types/react": "^18.2.6",
